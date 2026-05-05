@@ -1,0 +1,50 @@
+{
+  "name": "pronouncing",
+  "version": "0.0.2",
+  "description": "a simple interface to the CMU pronouncing dictionary",
+  "author": "Allison Parrish <allison@decontextualize.com>",
+  "contributors": [
+    {
+      "name": "Aleksey Calvin Tsukanov",
+      "email": "alekseycalvin@gmail.com",
+      "url": "https://SilverAgePoets.com"
+    }
+  ],
+  "main": "./dist/cjs/pronouncing.js",
+  "module": "./dist/esm/pronouncing.mjs",
+  "types": "./dist/cjs/pronouncing.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cjs/pronouncing.d.ts",
+      "import": "./dist/esm/pronouncing.mjs",
+      "require": "./dist/cjs/pronouncing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "pronouncing.d.ts"
+  ],
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm && npm run build:browser && npm run copy:dts",
+    "build:cjs": "tsc && node -e \"require('fs').copyFileSync('src/cmudict-0.7b', 'dist/cjs/cmudict-0.7b')\"",
+    "build:esm": "node -e \"require('fs').mkdirSync('dist/esm',{recursive:true}); require('fs').writeFileSync('dist/esm/pronouncing.mjs', 'export * from \\\"../cjs/pronouncing.js\\\";\\n');\"",
+    "build:browser": "browserify -t brfs dist/cjs/pronouncing.js --standalone pronouncing > dist/pronouncing-browser.js",
+    "build:test": "tsc -p tsconfig.test.json && node -e \"require('fs').copyFileSync('src/cmudict-0.7b', 'dist-test/src/cmudict-0.7b')\"",
+    "copy:dts": "node -e \"require('fs').copyFileSync('dist/cjs/pronouncing.d.ts', 'pronouncing.d.ts')\"",
+    "test": "npm run build:test && node dist-test/test/pronouncing.test.js && node dist-test/test/manual.test.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/tape": "^5.6.0",
+    "brfs": "^2.0.0",
+    "browserify": "^17.0.0",
+    "tape": "^5.7.0",
+    "typescript": "^5.4.0"
+  },
+  "license": "MIT",
+  "browserify": {
+    "transform": ["brfs"]
+  }
+}
